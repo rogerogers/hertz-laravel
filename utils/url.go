@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/base64"
-	"fmt"
 	"net/url"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -10,7 +9,6 @@ import (
 
 func B64SafeDecode(encoded []byte) (decoded []byte, err error) {
 	escape, err := url.QueryUnescape(string(encoded))
-	fmt.Println(escape)
 	if err != nil {
 		hlog.Error(err, 1)
 		return

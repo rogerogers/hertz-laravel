@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -44,8 +43,7 @@ func Auth(options ...Option) app.HandlerFunc {
 			return
 		}
 		userId, err := getUserId(c, cfg)
-		fmt.Println(userId)
-		if err != nil {
+		if err != nil || userId == 0 {
 			c.AbortWithStatus(401)
 			return
 		}
