@@ -27,6 +27,8 @@ type userModel struct {
 	RememberToken string
 }
 
+type LaravelKey string
+
 type sessionModel map[any]any
 
 func Auth(options ...Option) app.HandlerFunc {
@@ -47,6 +49,7 @@ func Auth(options ...Option) app.HandlerFunc {
 			c.AbortWithStatus(401)
 			return
 		}
+		ctx = context.WithValue(ctx, LaravelKey("userId"), userId)
 
 		c.Next(ctx)
 	}
