@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"log"
+	"net/http"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/redis/go-redis/v9"
@@ -9,12 +12,9 @@ import (
 	"github.com/rogerogers/hertz-laravel/utils"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"log"
-	"net/http"
 )
 
 func main() {
-
 	redisClient := redis.NewClient(&redis.Options{})
 	db, err := gorm.Open(sqlite.Open("laravel"), &gorm.Config{})
 	if err != nil {

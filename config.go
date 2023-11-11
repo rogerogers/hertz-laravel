@@ -50,8 +50,8 @@ func WithSessionCookieName(cm string) Option {
 	return option(func(cfg *authConfig) {
 		cfg.sessionCookieName = cm
 	})
-
 }
+
 func WithRememberCookieName(cm string) Option {
 	return option(func(cfg *authConfig) {
 		cfg.rememberCookieName = cm

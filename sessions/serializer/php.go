@@ -2,6 +2,7 @@ package serializer
 
 import (
 	"fmt"
+
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/elliotchance/phpserialize"
 	"github.com/gorilla/sessions"
@@ -21,7 +22,6 @@ func (s PHPSerializer) Serialize(ss *sessions.Session) ([]byte, error) {
 		m[ks] = v
 	}
 	return phpserialize.Marshal(m, nil)
-
 }
 
 type mapStrInterface map[interface{}]interface{}

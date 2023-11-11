@@ -2,8 +2,9 @@ package serializer
 
 import (
 	"fmt"
-	"github.com/elliotchance/phpserialize"
 	"testing"
+
+	"github.com/elliotchance/phpserialize"
 )
 
 func TestPHPSerialize(t *testing.T) {
@@ -19,5 +20,4 @@ func TestPHPSerialize(t *testing.T) {
 }
 
 func TestPHPDeserialize(t *testing.T) {
-
 }

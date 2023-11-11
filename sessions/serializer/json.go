@@ -3,6 +3,7 @@ package serializer
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/gorilla/sessions"
 )

@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/elliotchance/phpserialize"
 	"github.com/redis/go-redis/v9"
+
 	"github.com/rogerogers/hertz-laravel/utils"
-	"strconv"
-	"strings"
 )
 
 type cookieValue struct {
@@ -60,7 +62,6 @@ func getUserId(c *app.RequestContext, cfg *authConfig) (int, error) {
 		userId, err = getUserIdFromRememberWeb(rememberWeb, cfg)
 	}
 	return userId, nil
-
 }
 
 func parseCookie(cookie []byte, cfg *authConfig) (string, error) {
@@ -86,7 +87,6 @@ func parseCookie(cookie []byte, cfg *authConfig) (string, error) {
 }
 
 func getUserIdFromLaravelSession(cookie []byte, cfg *authConfig) (int, error) {
-
 	decryptValue, err := parseCookie(cookie, cfg)
 	if err != nil {
 		return 0, err

@@ -3,8 +3,9 @@ package utils
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"net/url"
+
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 func B64SafeDecode(encoded []byte) (decoded []byte, err error) {
