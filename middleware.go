@@ -27,7 +27,7 @@ type userModel struct {
 	RememberToken string
 }
 
-type sessionModel map[string]any
+type sessionModel map[any]any
 
 func Auth(options ...Option) app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
@@ -99,7 +99,7 @@ func getUserIdFromLaravelSession(cookie []byte, cfg *authConfig) (int, error) {
 		return 0, errors.New("401")
 	}
 
-	var payloadByte []byte
+	var payloadByte string
 	redisResByte, err := redisRes.Bytes()
 	if err != nil {
 		return 0, errors.New("401")
@@ -114,12 +114,12 @@ func getUserIdFromLaravelSession(cookie []byte, cfg *authConfig) (int, error) {
 
 	switch cfg.serialization {
 	case PhpSerialize:
-		err = phpserialize.Unmarshal(payloadByte, &payload)
+		err = phpserialize.Unmarshal([]byte(payloadByte), &payload)
 		if err != nil {
 			return 0, errors.New("401")
 		}
 	case JsonSerialize:
-		err = json.Unmarshal(payloadByte, &payload)
+		err = json.Unmarshal([]byte(payloadByte), &payload)
 		if err != nil {
 			return 0, errors.New("401")
 		}
@@ -130,7 +130,7 @@ func getUserIdFromLaravelSession(cookie []byte, cfg *authConfig) (int, error) {
 		return 0, errors.New("401")
 	}
 
-	return userid.(int), nil
+	return int(userid.(int64)), nil
 }
 
 func getUserIdFromRememberWeb(cookie []byte, cfg *authConfig) (int, error) {

@@ -87,3 +87,9 @@ func WithDb(db *gorm.DB) Option {
 		cfg.db = db
 	})
 }
+
+func WithSerialization(serialization serialization) Option {
+	return option(func(cfg *authConfig) {
+		cfg.serialization = serialization
+	})
+}
