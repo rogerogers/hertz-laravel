@@ -14,22 +14,21 @@ import (
 	"github.com/rogerogers/hertz-laravel/utils"
 )
 
-type cookieValue struct {
-	Iv    string `json:"iv"`
-	Mac   string `json:"mac"`
-	Value string `json:"value"`
-	Tag   string `json:"tag"`
-}
-
-type userModel struct {
-	Id            int
-	Password      string
-	RememberToken string
-}
-
-type LaravelKey string
-
-type sessionModel map[any]any
+type (
+	cookieValue struct {
+		Iv    string `json:"iv"`
+		Mac   string `json:"mac"`
+		Value string `json:"value"`
+		Tag   string `json:"tag"`
+	}
+	userModel struct {
+		Id            int
+		Password      string
+		RememberToken string
+	}
+	LaravelKey   string
+	sessionModel map[any]any
+)
 
 func Auth(options ...Option) app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
@@ -46,7 +45,7 @@ func Auth(options ...Option) app.HandlerFunc {
 		}
 		userId, err := getUserId(c, cfg)
 		if err != nil || userId == 0 {
-			c.AbortWithStatus(401)
+			cfg.UnAuthHandler(ctx, c)
 			return
 		}
 		ctx = context.WithValue(ctx, LaravelKey("userId"), userId)
@@ -61,6 +60,9 @@ func getUserId(c *app.RequestContext, cfg *authConfig) (int, error) {
 	if err != nil {
 		rememberWeb := c.Cookie(cfg.rememberCookieName)
 		userId, err = getUserIdFromRememberWeb(rememberWeb, cfg)
+		if err != nil {
+			return 0, nil
+		}
 	}
 	return userId, nil
 }
@@ -94,7 +96,7 @@ func getUserIdFromLaravelSession(cookie []byte, cfg *authConfig) (int, error) {
 	}
 	ssArr := strings.Split(decryptValue, "|")
 	ssId := ssArr[0]
-	if !cfg.disableEncryptCookies && len(ssArr) == 2 {
+	if !cfg.disableEncryptCookies && len(ssArr) == 2 && !utils.InArray(cfg.sessionCookieName, cfg.exceptEncryptCookies) {
 		ssId = ssArr[1]
 	}
 	redisRes := cfg.redisClient.Get(context.Background(), strings.Join([]string{cfg.cachePrefix, ssId}, ""))
@@ -143,7 +145,7 @@ func getUserIdFromRememberWeb(cookie []byte, cfg *authConfig) (int, error) {
 	}
 	ssArr := strings.Split(decryptValue, "|")
 	userid, rememberToken, hashedPass := ssArr[0], ssArr[1], ssArr[2]
-	if !cfg.disableEncryptCookies && len(ssArr) == 4 {
+	if !cfg.disableEncryptCookies && len(ssArr) == 4 && !utils.InArray(cfg.rememberCookieName, cfg.exceptEncryptCookies) {
 		userid, rememberToken, hashedPass = ssArr[1], ssArr[2], ssArr[3]
 	}
 

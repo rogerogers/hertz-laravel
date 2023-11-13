@@ -1,6 +1,9 @@
 package hertz_laravel
 
 import (
+	"context"
+
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -22,6 +25,8 @@ const (
 	JsonSerialize serialization = "json"
 )
 
+type unAuthHandler func(ctx context.Context, c *app.RequestContext)
+
 type authConfig struct {
 	appKey                []byte
 	sessionCookieName     string
@@ -34,6 +39,7 @@ type authConfig struct {
 	redisClient           redis.UniversalClient
 	serialization         serialization
 	cachePrefix           string
+	UnAuthHandler         unAuthHandler
 }
 
 func defaultAuthConfig() *authConfig {
@@ -43,6 +49,9 @@ func defaultAuthConfig() *authConfig {
 		ignorePaths:        []string{"/login", "/api/login"},
 		serialization:      PhpSerialize,
 		tableName:          "users",
+		UnAuthHandler: func(ctx context.Context, c *app.RequestContext) {
+			c.AbortWithStatus(401)
+		},
 	}
 }
 
@@ -91,5 +100,11 @@ func WithDb(db *gorm.DB) Option {
 func WithSerialization(serialization serialization) Option {
 	return option(func(cfg *authConfig) {
 		cfg.serialization = serialization
+	})
+}
+
+func WithUnAuthHandler(handler unAuthHandler) Option {
+	return option(func(cfg *authConfig) {
+		cfg.UnAuthHandler = handler
 	})
 }
