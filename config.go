@@ -55,6 +55,12 @@ func defaultAuthConfig() *authConfig {
 	}
 }
 
+func WithAppKey(appKey []byte) Option {
+	return option(func(cfg *authConfig) {
+		cfg.appKey = appKey
+	})
+}
+
 func WithSessionCookieName(cm string) Option {
 	return option(func(cfg *authConfig) {
 		cfg.sessionCookieName = cm
@@ -73,21 +79,15 @@ func WithIgnorePaths(paths []string) Option {
 	})
 }
 
-func WithAppKey(appKey []byte) Option {
+func WithDisableEncryptCookies(disable bool) Option {
 	return option(func(cfg *authConfig) {
-		cfg.appKey = appKey
+		cfg.disableEncryptCookies = disable
 	})
 }
 
-func WithRedisClient(client redis.UniversalClient) Option {
+func WithExceptEncryptCookies(except []string) Option {
 	return option(func(cfg *authConfig) {
-		cfg.redisClient = client
-	})
-}
-
-func WithCachePrefix(prefix string) Option {
-	return option(func(cfg *authConfig) {
-		cfg.cachePrefix = prefix
+		cfg.exceptEncryptCookies = except
 	})
 }
 
@@ -97,9 +97,27 @@ func WithDb(db *gorm.DB) Option {
 	})
 }
 
+func WithTableName(tableName string) Option {
+	return option(func(cfg *authConfig) {
+		cfg.tableName = tableName
+	})
+}
+
+func WithRedisClient(client redis.UniversalClient) Option {
+	return option(func(cfg *authConfig) {
+		cfg.redisClient = client
+	})
+}
+
 func WithSerialization(serialization serialization) Option {
 	return option(func(cfg *authConfig) {
 		cfg.serialization = serialization
+	})
+}
+
+func WithCachePrefix(prefix string) Option {
+	return option(func(cfg *authConfig) {
+		cfg.cachePrefix = prefix
 	})
 }
 
