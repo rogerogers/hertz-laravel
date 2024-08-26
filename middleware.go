@@ -6,6 +6,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/elliotchance/phpserialize"
@@ -110,7 +111,6 @@ func getUserIdFromLaravelSession(cookie []byte, cfg *authConfig) (int, error) {
 		return 0, errors.New("401")
 	}
 	err = phpserialize.Unmarshal(redisResByte, &payloadByte)
-
 	if err != nil {
 		return 0, errors.New("401")
 	}
@@ -151,11 +151,21 @@ func getUserIdFromRememberWeb(cookie []byte, cfg *authConfig) (int, error) {
 
 	var user userModel
 
+	cachedStr, _ := cfg.redisClient.Get(context.Background(), userid).Result()
+	if cachedStr != "" {
+		err = json.Unmarshal([]byte(cachedStr), &user)
+		if err == nil {
+			return user.Id, nil
+		}
+	}
+
 	err = cfg.db.Table(cfg.tableName).First(&user, userid).Error
 	if err != nil {
 		return 0, err
 	}
 	if strconv.Itoa(user.Id) == userid && user.Password == hashedPass && user.RememberToken == rememberToken {
+		userJson, _ := json.Marshal(user)
+		cfg.redisClient.Set(context.Background(), userid, userJson, time.Hour)
 		return user.Id, nil
 	}
 
