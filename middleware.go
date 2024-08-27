@@ -149,6 +149,10 @@ func getUserIdFromRememberWeb(cookie []byte, cfg *authConfig) (int, error) {
 		userid, rememberToken, hashedPass = ssArr[1], ssArr[2], ssArr[3]
 	}
 
+	if b, e := strconv.Atoi(userid); e != nil || b == 0 {
+		return 0, errors.New("401")
+	}
+
 	var user userModel
 
 	cachedStr, _ := cfg.redisClient.Get(context.Background(), userid).Result()
