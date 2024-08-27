@@ -7,8 +7,8 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-func B64SafeDecode(encoded []byte) (decoded []byte, err error) {
-	escape, err := url.QueryUnescape(string(encoded))
+func B64SafeDecode(encoded string) (decoded []byte, err error) {
+	escape, err := url.QueryUnescape(encoded)
 	if err != nil {
 		hlog.Error(err, 1)
 		return

@@ -69,7 +69,7 @@ func getUserId(c *app.RequestContext, cfg *authConfig) (int, error) {
 }
 
 func parseCookie(cookie []byte, cfg *authConfig) (string, error) {
-	decoded, err := utils.B64SafeDecode(cookie)
+	decoded, err := utils.B64SafeDecode(string(cookie))
 	if err != nil {
 		return "", err
 	}
